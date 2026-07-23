@@ -930,28 +930,30 @@ export default function Home() {
             <h2 id="contact-title">How can<br />I help you?</h2>
           </div>
           <div className="contact-surface reveal">
-            <div className="contact-terminal lens-build">
-              <div className="terminal-bar"><span>ashutosh.sys — contact</span><i /></div>
-              <p><span>$</span> contact --ashutosh</p>
-              <p><small>EMAIL</small> ashutoshmittal.official@gmail.com</p>
-              <p><small>PHONE</small> +91 87555 56611</p>
-              <p><small>STATUS</small> channel open</p>
-            </div>
-            <div className="calling-card lens-run">
-              <span>PRIVATE CALLING CARD / 2026</span>
-              <strong>Ashutosh Mittal</strong>
-              <em>Technical operator · New Delhi</em>
-              <p>ashutoshmittal.official@gmail.com<br />+91 87555 56611</p>
-            </div>
-            <div className="contact-actions">
-              <button type="button" onClick={() => copyText("email", "ashutoshmittal.official@gmail.com")}>
-                {copied === "email" ? "EMAIL COPIED" : "COPY EMAIL"}<ArrowMark />
-              </button>
-              <a href="mailto:ashutoshmittal.official@gmail.com">WRITE AN EMAIL <ArrowMark /></a>
-              <a href="/resume-tech.pdf" download>TECH RESUME <ArrowMark /></a>
-              <a href="/resume-management.pdf" download>MANAGEMENT RESUME <ArrowMark /></a>
-              <a href="https://www.linkedin.com/in/ashutosh-mittal-736445287" target="_blank" rel="noreferrer">LINKEDIN <ArrowMark /></a>
-              <a href="https://github.com/MittalAshutosh" target="_blank" rel="noreferrer">GITHUB <ArrowMark /></a>
+            <div className="contact-rail">
+              <div className="contact-terminal lens-build">
+                <div className="terminal-bar"><span>ashutosh.sys — contact</span><i /></div>
+                <p><span>$</span> contact --ashutosh</p>
+                <p><small>EMAIL</small> ashutoshmittal.official@gmail.com</p>
+                <p><small>PHONE</small> +91 87555 56611</p>
+                <p><small>STATUS</small> channel open</p>
+              </div>
+              <div className="calling-card lens-run">
+                <span>PRIVATE CALLING CARD / 2026</span>
+                <strong>Ashutosh Mittal</strong>
+                <em>Technical operator · New Delhi</em>
+                <p>ashutoshmittal.official@gmail.com<br />+91 87555 56611</p>
+              </div>
+              <div className="contact-actions">
+                <button type="button" onClick={() => copyText("email", "ashutoshmittal.official@gmail.com")}>
+                  {copied === "email" ? "EMAIL COPIED" : "COPY EMAIL"}<ArrowMark />
+                </button>
+                <a href="mailto:ashutoshmittal.official@gmail.com">WRITE AN EMAIL <ArrowMark /></a>
+                <a href="/resume-tech.pdf" download>TECH RESUME <ArrowMark /></a>
+                <a href="/resume-management.pdf" download>MANAGEMENT RESUME <ArrowMark /></a>
+                <a href="https://www.linkedin.com/in/ashutosh-mittal-736445287" target="_blank" rel="noreferrer">LINKEDIN <ArrowMark /></a>
+                <a href="https://github.com/MittalAshutosh" target="_blank" rel="noreferrer">GITHUB <ArrowMark /></a>
+              </div>
             </div>
             <form className="inquiry-form" onSubmit={handleInquirySubmit}>
               <div className="inquiry-form-heading">
