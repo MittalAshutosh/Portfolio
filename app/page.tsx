@@ -273,12 +273,40 @@ const engagementPaths: Array<{
   },
 ];
 
-const inquiryOptions: Array<{ id: InquiryType; icon: string; label: string }> = [
-  { id: "project", icon: "🚀", label: "Start a Project" },
-  { id: "hire", icon: "💼", label: "Hire Me" },
-  { id: "consultation", icon: "💡", label: "Book a Consultation" },
-  { id: "partnership", icon: "🤝", label: "Partnership" },
-  { id: "other", icon: "💬", label: "Other" },
+const inquiryOptions: Array<{
+  id: InquiryType;
+  icon: string;
+  label: string;
+  signal: string;
+  description: string;
+  featured?: boolean;
+}> = [
+  {
+    id: "project",
+    icon: "🚀",
+    label: "Start a Project",
+    signal: "Ship a product",
+    description: "Bring the idea or business problem. I bring the team and own the journey from scope to launch.",
+    featured: true,
+  },
+  {
+    id: "hire",
+    icon: "💼",
+    label: "Hire Me",
+    signal: "Add a leader",
+    description: "Bring me inside the organisation to lead product, technology, people, and delivery with clear ownership.",
+    featured: true,
+  },
+  {
+    id: "consultation",
+    icon: "💡",
+    label: "Book a Consultation",
+    signal: "Make the right call",
+    description: "Bring the difficult decision. Leave with expert clarity, trade-offs, and an executable next move.",
+    featured: true,
+  },
+  { id: "partnership", icon: "🤝", label: "Partnership", signal: "Build together", description: "Explore a venture, delivery, or strategic alliance." },
+  { id: "other", icon: "💬", label: "Other", signal: "Open a channel", description: "Start a conversation that does not fit a box." },
 ];
 
 function ArrowMark() {
@@ -917,18 +945,25 @@ export default function Home() {
             </div>
             <form className="inquiry-form" onSubmit={handleInquirySubmit}>
               <div className="inquiry-form-heading">
-                <span>SELECT A PATH / 01</span>
-                <p>Tell me what kind of conversation this is. The form will adapt to what matters.</p>
+                <span>CHOOSE THE OUTCOME / 01</span>
+                <p>Not three versions of “contact me.” Choose what you need to be different after we work together.</p>
               </div>
               <div className="inquiry-options" role="group" aria-label="How can I help you?">
                 {inquiryOptions.map((option) => (
                   <button
                     type="button"
                     key={option.id}
+                    className={option.featured ? "featured" : "compact"}
                     aria-pressed={inquiryType === option.id}
                     onClick={() => setInquiryType(option.id)}
                   >
-                    <span aria-hidden="true">{option.icon}</span>{option.label}
+                    <span className="inquiry-option-icon" aria-hidden="true">{option.icon}</span>
+                    <span className="inquiry-option-copy">
+                      <strong>{option.signal}</strong>
+                      <b>{option.label}</b>
+                      <small>{option.description}</small>
+                    </span>
+                    <ArrowMark />
                   </button>
                 ))}
               </div>

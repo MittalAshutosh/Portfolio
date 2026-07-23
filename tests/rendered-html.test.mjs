@@ -33,6 +33,9 @@ test("server-renders the complete portfolio", async () => {
   assert.match(html, /Start a Project/);
   assert.match(html, /Hire Me/);
   assert.match(html, /Book a Consultation/);
+  assert.match(html, /Ship a product/);
+  assert.match(html, /Add a leader/);
+  assert.match(html, /Make the right call/);
   assert.match(html, /How can[^<]*<br\s*\/>I help you\?/i);
   assert.match(html, /Partnership/);
   assert.match(html, /CONTINUE BY EMAIL/);
