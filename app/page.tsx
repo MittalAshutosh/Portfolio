@@ -3,9 +3,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import Script from "next/script";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 
 type Kernel = "build" | "run";
+type InquiryType = "project" | "hire" | "consultation" | "partnership" | "other";
 
 type Role = {
   years: string;
@@ -234,6 +235,52 @@ const runSkills = [
   "SLA & escalation ownership",
 ];
 
+const engagementPaths: Array<{
+  id: Exclude<InquiryType, "partnership" | "other">;
+  index: string;
+  icon: string;
+  title: string;
+  audience: string;
+  promise: string;
+  examples: string[];
+}> = [
+  {
+    id: "project",
+    index: "01",
+    icon: "🚀",
+    title: "Start a Project",
+    audience: "For founders, startups, and businesses that need a complete digital product delivered.",
+    promise: "I assemble and lead the right team from product definition through architecture, build, launch, and iteration.",
+    examples: ["Web & mobile applications", "SaaS, AI & automation", "MVPs & enterprise software"],
+  },
+  {
+    id: "hire",
+    index: "02",
+    icon: "💼",
+    title: "Hire Me",
+    audience: "For companies looking for technology, product, or delivery leadership.",
+    promise: "I step into the room where product direction, technical reality, and team execution need one accountable owner.",
+    examples: ["Product & program leadership", "Engineering management", "Solution architecture & fractional CTO"],
+  },
+  {
+    id: "consultation",
+    index: "03",
+    icon: "💡",
+    title: "Book a Consultation",
+    audience: "For businesses that need clarity before committing time, budget, or technical direction.",
+    promise: "I turn ambiguous technology and product questions into decisions, plans, estimates, and executable next steps.",
+    examples: ["Technology & product strategy", "Architecture & technical due diligence", "AI adoption & business automation"],
+  },
+];
+
+const inquiryOptions: Array<{ id: InquiryType; icon: string; label: string }> = [
+  { id: "project", icon: "🚀", label: "Start a Project" },
+  { id: "hire", icon: "💼", label: "Hire Me" },
+  { id: "consultation", icon: "💡", label: "Book a Consultation" },
+  { id: "partnership", icon: "🤝", label: "Partnership" },
+  { id: "other", icon: "💬", label: "Other" },
+];
+
 function ArrowMark() {
   return <span className="arrow-mark" aria-hidden="true" />;
 }
@@ -249,6 +296,7 @@ function LensCopy({ build, run }: { build: string; run: string }) {
 
 export default function Home() {
   const [kernel, setKernel] = useState<Kernel>("build");
+  const [inquiryType, setInquiryType] = useState<InquiryType>("project");
   const [bootLine, setBootLine] = useState(0);
   const [activeProject, setActiveProject] = useState<Project | null>(null);
   const [copied, setCopied] = useState<string | null>(null);
@@ -327,7 +375,9 @@ export default function Home() {
 
   useEffect(() => {
     const root = document.documentElement;
-    setKernel(root.dataset.kernel === "run" ? "run" : "build");
+    const kernelFrame = window.requestAnimationFrame(() => {
+      setKernel(root.dataset.kernel === "run" ? "run" : "build");
+    });
 
     if (root.dataset.boot === "pending") {
       const bootTimers = [
@@ -339,10 +389,13 @@ export default function Home() {
       const keySkip = () => skipBoot();
       window.addEventListener("keydown", keySkip, { once: true });
       return () => {
+        window.cancelAnimationFrame(kernelFrame);
         bootTimers.forEach((timer) => window.clearTimeout(timer));
         window.removeEventListener("keydown", keySkip);
       };
     }
+
+    return () => window.cancelAnimationFrame(kernelFrame);
   }, [skipBoot]);
 
   useEffect(() => {
@@ -509,6 +562,48 @@ export default function Home() {
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
+  const beginInquiry = (type: InquiryType) => {
+    commandDialogRef.current?.close();
+    setInquiryType(type);
+    window.requestAnimationFrame(() => {
+      document.getElementById("contact")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+  };
+
+  const handleInquirySubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+    const selected = inquiryOptions.find((option) => option.id === inquiryType)?.label ?? "Website inquiry";
+    const fieldLabels: Record<string, string> = {
+      name: "Name",
+      email: "Email",
+      company: "Company / organisation",
+      phone: "Phone",
+      projectType: "Product type",
+      projectSummary: "Project summary",
+      budget: "Budget range",
+      timeline: "Target timeline",
+      role: "Role / mandate",
+      engagementModel: "Engagement model",
+      leadershipNeed: "Leadership need",
+      location: "Location / work mode",
+      consultationArea: "Consultation area",
+      challenge: "Current challenge",
+      consultationTimeline: "Preferred timeframe",
+      partnershipType: "Partnership type",
+      partnershipProposal: "Partnership proposal",
+      subject: "Subject",
+      message: "Message",
+    };
+    const body = Array.from(formData.entries())
+      .filter(([key, value]) => key !== "inquiryType" && String(value).trim())
+      .map(([key, value]) => `${fieldLabels[key] ?? key}: ${String(value).trim()}`)
+      .join("\n\n");
+    const name = String(formData.get("name") ?? "Website visitor").trim();
+    const subject = `${selected} — ${name}`;
+    window.location.href = `mailto:ashutoshmittal.official@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  };
+
   return (
     <>
       <Script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js" strategy="afterInteractive" />
@@ -543,9 +638,10 @@ export default function Home() {
           AM<span>/26</span>
         </a>
         <nav aria-label="Primary navigation">
-          <a href="#trajectory">Trajectory</a>
           <a href="#work">Work</a>
-          <a href="#contact">Contact</a>
+          <a href="#contact" onClick={() => setInquiryType("project")}>Start a Project</a>
+          <a href="#contact" onClick={() => setInquiryType("hire")}>Hire Me</a>
+          <a href="#contact" onClick={() => setInquiryType("consultation")}>Book a Consultation</a>
           <button
             className="command-key"
             type="button"
@@ -590,12 +686,20 @@ export default function Home() {
               <LensCopy build="I ship systems." run="I run the ship." />
             </h2>
             <p>
-              Full-stack engineer and technical project manager on the founding team of RSN One—building
-              cross-border commerce with a team across India, Nepal, and China.
+              I lead technology and product teams, deliver complete software with my team, and help
+              businesses make high-consequence product and technology decisions.
             </p>
-            <a className="magnetic-cta" href="#work">
-              See the work <ArrowMark />
-            </a>
+            <div className="hero-cta-group" aria-label="Ways to work with Ashutosh">
+              <a className="magnetic-cta" href="#contact" onClick={() => setInquiryType("project")}>
+                Start a Project <ArrowMark />
+              </a>
+              <a className="magnetic-cta" href="#contact" onClick={() => setInquiryType("hire")}>
+                Hire Me <ArrowMark />
+              </a>
+              <a className="magnetic-cta" href="#contact" onClick={() => setInquiryType("consultation")}>
+                Book a Consultation <ArrowMark />
+              </a>
+            </div>
           </div>
           <div className="scroll-cue" aria-hidden="true"><span>SCROLL TO TRACE</span><i /></div>
         </section>
@@ -710,14 +814,27 @@ export default function Home() {
           </div>
         </section>
 
-        <section className="capabilities section-shell" id="capabilities" aria-labelledby="capabilities-title">
+        <section className="capabilities section-shell" id="work-with-me" aria-labelledby="capabilities-title">
           <div className="section-index reveal">
-            <span>04</span><span>CAPABILITY MATRIX</span>
+            <span>04</span><span>WAYS TO WORK TOGETHER</span>
           </div>
           <div className="cap-heading reveal">
-            <h2 id="capabilities-title">Two modes.<br />No handoff.</h2>
-            <p>The active kernel leads. The other stays in the room.</p>
+            <h2 id="capabilities-title">Three paths.<br />One accountable lead.</h2>
+            <p>Choose the shape of support you need. The BUILD and RUN capabilities remain connected in every engagement.</p>
           </div>
+          <div className="engagement-grid reveal">
+            {engagementPaths.map((path) => (
+              <article className="engagement-card" key={path.id}>
+                <header><span>{path.index} / ENGAGEMENT</span><i aria-hidden="true">{path.icon}</i></header>
+                <h3>{path.title}</h3>
+                <p className="engagement-audience">{path.audience}</p>
+                <p>{path.promise}</p>
+                <ul>{path.examples.map((example) => <li key={example}>{example}</li>)}</ul>
+                <button type="button" onClick={() => beginInquiry(path.id)}>{path.title.toUpperCase()} <ArrowMark /></button>
+              </article>
+            ))}
+          </div>
+          <div className="cap-subheading reveal"><span>CAPABILITY MATRIX</span><p>Two operating modes. No handoff between strategy and execution.</p></div>
           <div className="cap-matrix reveal">
             <article className="cap-column build-column">
               <header><span>KERNEL / 01</span><strong>BUILD</strong></header>
@@ -782,7 +899,7 @@ export default function Home() {
           </div>
           <div className="contact-heading reveal">
             <p>NEW DELHI / REMOTE WORLDWIDE</p>
-            <h2 id="contact-title">Put the difficult<br />thing on the table.</h2>
+            <h2 id="contact-title">How can<br />I help you?</h2>
           </div>
           <div className="contact-surface reveal">
             <div className="contact-terminal lens-build">
@@ -798,6 +915,75 @@ export default function Home() {
               <em>Technical operator · New Delhi</em>
               <p>ashutoshmittal.official@gmail.com<br />+91 87555 56611</p>
             </div>
+            <form className="inquiry-form" onSubmit={handleInquirySubmit}>
+              <div className="inquiry-form-heading">
+                <span>SELECT A PATH / 01</span>
+                <p>Tell me what kind of conversation this is. The form will adapt to what matters.</p>
+              </div>
+              <div className="inquiry-options" role="group" aria-label="How can I help you?">
+                {inquiryOptions.map((option) => (
+                  <button
+                    type="button"
+                    key={option.id}
+                    aria-pressed={inquiryType === option.id}
+                    onClick={() => setInquiryType(option.id)}
+                  >
+                    <span aria-hidden="true">{option.icon}</span>{option.label}
+                  </button>
+                ))}
+              </div>
+              <input type="hidden" name="inquiryType" value={inquiryType} />
+              <div className="inquiry-fields" key={inquiryType}>
+                <label><span>Your name *</span><input name="name" autoComplete="name" required /></label>
+                <label><span>Work email *</span><input name="email" type="email" autoComplete="email" required /></label>
+                <label><span>Company / organisation</span><input name="company" autoComplete="organization" /></label>
+                <label><span>Phone / WhatsApp</span><input name="phone" type="tel" autoComplete="tel" /></label>
+
+                {inquiryType === "project" && (
+                  <>
+                    <label><span>What are we building? *</span><select name="projectType" required defaultValue=""><option value="" disabled>Select product type</option><option>Web application</option><option>Mobile application</option><option>SaaS product</option><option>AI solution or automation</option><option>Enterprise or custom software</option><option>MVP / proof of concept</option><option>Other digital product</option></select></label>
+                    <label><span>Target timeline</span><select name="timeline" defaultValue=""><option value="">Select timeline</option><option>As soon as possible</option><option>Within 1–2 months</option><option>Within 3–6 months</option><option>6+ months / exploring</option></select></label>
+                    <label><span>Indicative budget</span><select name="budget" defaultValue=""><option value="">Select budget range</option><option>Under US$5,000</option><option>US$5,000–15,000</option><option>US$15,000–50,000</option><option>US$50,000+</option><option>Need help estimating</option></select></label>
+                    <label className="field-wide"><span>Describe the product, users, and desired outcome *</span><textarea name="projectSummary" rows={6} required /></label>
+                  </>
+                )}
+
+                {inquiryType === "hire" && (
+                  <>
+                    <label><span>Role or mandate *</span><input name="role" placeholder="e.g. Technical Project Manager" required /></label>
+                    <label><span>Engagement model</span><select name="engagementModel" defaultValue=""><option value="">Select model</option><option>Full-time role</option><option>Contract leadership</option><option>Fractional CTO / advisor</option><option>Consulting engagement</option><option>Open to discussion</option></select></label>
+                    <label><span>Location / work mode</span><input name="location" placeholder="Remote, hybrid, city or timezone" /></label>
+                    <label className="field-wide"><span>What should I own, lead, or improve? *</span><textarea name="leadershipNeed" rows={6} required /></label>
+                  </>
+                )}
+
+                {inquiryType === "consultation" && (
+                  <>
+                    <label><span>Consultation area *</span><select name="consultationArea" required defaultValue=""><option value="" disabled>Select focus area</option><option>Technology strategy</option><option>Software architecture</option><option>Product strategy or planning</option><option>AI adoption or automation</option><option>Digital transformation</option><option>Technical due diligence</option><option>Cost estimation or delivery planning</option><option>Other advisory need</option></select></label>
+                    <label><span>Preferred timeframe</span><select name="consultationTimeline" defaultValue=""><option value="">Select timeframe</option><option>This week</option><option>Within 2 weeks</option><option>This month</option><option>Flexible</option></select></label>
+                    <label className="field-wide"><span>What decision or challenge are you facing? *</span><textarea name="challenge" rows={6} required /></label>
+                  </>
+                )}
+
+                {inquiryType === "partnership" && (
+                  <>
+                    <label><span>Partnership type *</span><input name="partnershipType" placeholder="Venture, delivery, channel, strategic..." required /></label>
+                    <label className="field-wide"><span>What could we create or unlock together? *</span><textarea name="partnershipProposal" rows={6} required /></label>
+                  </>
+                )}
+
+                {inquiryType === "other" && (
+                  <>
+                    <label><span>Subject *</span><input name="subject" required /></label>
+                    <label className="field-wide"><span>Your message *</span><textarea name="message" rows={6} required /></label>
+                  </>
+                )}
+              </div>
+              <div className="inquiry-submit">
+                <p>This prepares a structured email directly to me—no ticket queue.</p>
+                <button type="submit">CONTINUE BY EMAIL <ArrowMark /></button>
+              </div>
+            </form>
             <div className="contact-actions">
               <button type="button" onClick={() => copyText("email", "ashutoshmittal.official@gmail.com")}>
                 {copied === "email" ? "EMAIL COPIED" : "COPY EMAIL"}<ArrowMark />
@@ -855,9 +1041,11 @@ export default function Home() {
           <button type="button" onClick={() => jumpTo("trajectory")}><span>01</span>Trace the trajectory<kbd>G T</kbd></button>
           <button type="button" onClick={() => jumpTo("work")}><span>02</span>Open selected work<kbd>G W</kbd></button>
           <button type="button" onClick={() => { commandDialogRef.current?.close(); changeKernel(); }}><span>03</span>Transfer kernel<kbd>K</kbd></button>
-          <button type="button" onClick={() => jumpTo("contact")}><span>04</span>Open a channel<kbd>G C</kbd></button>
-          <a href="/resume-tech.pdf" download><span>05</span>Download tech resume<kbd>PDF</kbd></a>
-          <a href="/resume-management.pdf" download><span>06</span>Download management resume<kbd>PDF</kbd></a>
+          <button type="button" onClick={() => beginInquiry("project")}><span>04</span>Start a project<kbd>CTA</kbd></button>
+          <button type="button" onClick={() => beginInquiry("hire")}><span>05</span>Hire me<kbd>CTA</kbd></button>
+          <button type="button" onClick={() => beginInquiry("consultation")}><span>06</span>Book a consultation<kbd>CTA</kbd></button>
+          <a href="/resume-tech.pdf" download><span>07</span>Download tech resume<kbd>PDF</kbd></a>
+          <a href="/resume-management.pdf" download><span>08</span>Download management resume<kbd>PDF</kbd></a>
         </div>
       </dialog>
     </>

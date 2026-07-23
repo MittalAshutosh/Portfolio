@@ -30,6 +30,12 @@ test("server-renders the complete portfolio", async () => {
   assert.match(html, /I run the ship\./);
   assert.match(html, /RSN One/);
   assert.match(html, /METAVEO Automation/);
+  assert.match(html, /Start a Project/);
+  assert.match(html, /Hire Me/);
+  assert.match(html, /Book a Consultation/);
+  assert.match(html, /How can[^<]*<br\s*\/>I help you\?/i);
+  assert.match(html, /Partnership/);
+  assert.match(html, /CONTINUE BY EMAIL/);
   assert.match(html, /resume-tech\.pdf/);
   assert.match(html, /resume-management\.pdf/);
   assert.match(html, /application\/ld\+json/);

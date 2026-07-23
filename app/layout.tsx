@@ -5,7 +5,7 @@ import "./globals.css";
 const siteMetadata: Metadata = {
   title: "Ashutosh Mittal — Builder · Operator",
   description:
-    "Technical Project Manager and full-stack developer building production systems and running cross-border delivery from New Delhi.",
+    "Technology and product leader delivering complete software projects, leading teams, and advising businesses on strategy, architecture, AI, and transformation.",
   keywords: [
     "Ashutosh Mittal",
     "Technical Project Manager",
@@ -21,13 +21,13 @@ const siteMetadata: Metadata = {
     type: "profile",
     title: "Ashutosh Mittal — I ship systems. I run the ship.",
     description:
-      "Builder-operator across full-stack engineering, AI automation, VoIP infrastructure, and cross-border product delivery.",
+      "Start a project, hire a technology and product leader, or book a strategic consultation with Ashutosh Mittal.",
     images: [{ url: "/og.png", width: 1200, height: 630, alt: "Ashutosh Mittal — Builder and operator" }],
   },
   twitter: {
     card: "summary_large_image",
     title: "Ashutosh Mittal — Builder · Operator",
-    description: "I ship systems. I run the ship.",
+    description: "Build a product. Add a leader. Make the next technology decision with clarity.",
     images: ["/og.png"],
   },
   icons: {
@@ -55,7 +55,7 @@ const personSchema = {
   "@context": "https://schema.org",
   "@type": "Person",
   name: "Ashutosh Mittal",
-  jobTitle: "Technical Project Manager & Full-Stack Developer",
+  jobTitle: "Technology & Product Leader, Technical Project Manager, and Full-Stack Developer",
   email: "mailto:ashutoshmittal.official@gmail.com",
   telephone: "+91-8755556611",
   address: {
