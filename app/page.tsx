@@ -943,6 +943,16 @@ export default function Home() {
               <em>Technical operator · New Delhi</em>
               <p>ashutoshmittal.official@gmail.com<br />+91 87555 56611</p>
             </div>
+            <div className="contact-actions">
+              <button type="button" onClick={() => copyText("email", "ashutoshmittal.official@gmail.com")}>
+                {copied === "email" ? "EMAIL COPIED" : "COPY EMAIL"}<ArrowMark />
+              </button>
+              <a href="mailto:ashutoshmittal.official@gmail.com">WRITE AN EMAIL <ArrowMark /></a>
+              <a href="/resume-tech.pdf" download>TECH RESUME <ArrowMark /></a>
+              <a href="/resume-management.pdf" download>MANAGEMENT RESUME <ArrowMark /></a>
+              <a href="https://www.linkedin.com/in/ashutosh-mittal-736445287" target="_blank" rel="noreferrer">LINKEDIN <ArrowMark /></a>
+              <a href="https://github.com/MittalAshutosh" target="_blank" rel="noreferrer">GITHUB <ArrowMark /></a>
+            </div>
             <form className="inquiry-form" onSubmit={handleInquirySubmit}>
               <div className="inquiry-form-heading">
                 <span>CHOOSE THE OUTCOME / 01</span>
@@ -1019,16 +1029,6 @@ export default function Home() {
                 <button type="submit">CONTINUE BY EMAIL <ArrowMark /></button>
               </div>
             </form>
-            <div className="contact-actions">
-              <button type="button" onClick={() => copyText("email", "ashutoshmittal.official@gmail.com")}>
-                {copied === "email" ? "EMAIL COPIED" : "COPY EMAIL"}<ArrowMark />
-              </button>
-              <a href="mailto:ashutoshmittal.official@gmail.com">WRITE AN EMAIL <ArrowMark /></a>
-              <a href="/resume-tech.pdf" download>TECH RESUME <ArrowMark /></a>
-              <a href="/resume-management.pdf" download>MANAGEMENT RESUME <ArrowMark /></a>
-              <a href="https://www.linkedin.com/in/ashutosh-mittal-736445287" target="_blank" rel="noreferrer">LINKEDIN <ArrowMark /></a>
-              <a href="https://github.com/MittalAshutosh" target="_blank" rel="noreferrer">GITHUB <ArrowMark /></a>
-            </div>
           </div>
         </section>
       </main>
